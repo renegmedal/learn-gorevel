@@ -15,7 +15,7 @@ GET     /customers/createAccount                Accounts.Create
 # Disable /accounts/create to not found
 GET     /accounts/create                        404
 
-#GET     /orders/:orderId/pay                    Orders.GetPayment
+GET     /orders/:orderId/pay                    Orders.GetPayment
 
 # Example of auto Routes  /orders/12345, /order/12345/ProcessPayment
 
@@ -27,5 +27,7 @@ GET     /:controller/:orderId                   :controller.Info
 # Map static resources from the /app/public folder to the /public path
 GET     /public/*filepath                       Static.Serve("public")
 
+// route  /favicon.ico  -> location /public/images/favicon.png  
+GET     /favicon.ico                            Static.Serve("public", "images/favicon.png")
 # Catch all
 *       /:controller/:action                    :controller.:action
