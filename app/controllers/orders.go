@@ -15,3 +15,12 @@ type Orders struct {
 func (c Orders) Create() revel.Result { // returns so caller recognizes that it is a revel result
 	return c.Render()
 }
+
+// route  GET /orders/:orderId/pay
+// localhost:9000/orders/12345/pay
+func (o Orders) GetPayment(orderId int) revel.Result {
+
+	println("++++ orders.GetPayment() order ID: ", orderId)
+
+	return o.RenderTemplate("orders/payment.html") // path relative to /views/folder
+}

@@ -15,6 +15,7 @@ GET     /customers/createAccount                Accounts.Create
 // Disable /accounts/create to not found
 GET     /accounts/create                        404
 
+GET     /orders/:orderId/pay                    Orders.GetPayment
 
 # Map static resources from the /app/public folder to the /public path
 GET     /public/*filepath                       Static.Serve("public")
