@@ -24,3 +24,19 @@ func (o Orders) GetPayment(orderId int) revel.Result {
 
 	return o.RenderTemplate("orders/payment.html") // path relative to /views/folder
 }
+
+// route GET /:controller/:orderid -> /orders/556677
+func (o Orders) Info(orderId int) revel.Result {
+	println("+++++ orders.OrderInfo ORDER ID: ", orderId)
+
+	return o.RenderTemplate("App/index.html")
+
+}
+
+// route GET /:controller/:orderid/:action -> /orders/556677/orderinfo
+func (o Orders) ProcessPayment(orderId int) revel.Result {
+
+	println("+++++ orders.ProcessPayment ORDER ID: ", orderId)
+
+	return o.RenderTemplate("App/index.html")
+}
