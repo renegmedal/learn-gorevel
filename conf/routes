@@ -11,6 +11,7 @@ GET     /                                       App.Index
 
 # Need to restart the server, not auto-restart
 GET     /customers/createAccount                Accounts.Create
+POST    /customers/createAccount                Accounts.CreatePost
 
 # Disable /accounts/create to not found
 GET     /accounts/create                        404
