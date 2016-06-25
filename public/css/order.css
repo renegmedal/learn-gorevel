@@ -61,12 +61,12 @@ button {
 }
 
 [data-topping=anchovie] {
-  background-image: url(../images/toppings/anchovie.png);
+  background-image: url("/public/images/toppings/anchovie.png");
 }
 
 [data-topping=anchovie].selected,
 [data-topping=anchovie]:hover {
-  background-image: url(../images/toppings/anchovie_hi.png);
+  background-image: url("/public/images/toppings/anchovie_hi.png");
 }
 
 [data-topping=pepperoni] {

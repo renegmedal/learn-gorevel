@@ -2,24 +2,23 @@ package controllers
 
 import (
 	"fmt"
-	"pizzastore/app/models"
 
 	"github.com/revel/revel"
+	"github.com/vansimke/restaurant-site/app/models"
 )
 
 type Accounts struct {
 	*revel.Controller
 }
 
-func (a Accounts) Create() revel.Result {
-	return a.Render()
+func (c Accounts) Create() revel.Result {
+	return c.Render()
 }
 
-func (a Accounts) CreatePost() revel.Result {
+func (c Accounts) CreatePost() revel.Result {
 	var account models.Account
-	a.Params.Bind(&account, "account")
+	c.Params.Bind(&account, "account")
 
 	fmt.Printf("Account info: %v\n", account)
-
-	return a.RenderTemplate("accounts/create.html")
+	return c.RenderTemplate("accounts/create.html")
 }
