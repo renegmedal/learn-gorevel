@@ -1,5 +1,9 @@
 
 
+http://revel.github.io/manual/
+
+
+
 $ cd /Users/rene/System/GO/src/pizzastore
 $ revel run pizzastore
 
@@ -7,78 +11,239 @@ $ revel run pizzastore
 http://localhost:9000/app/createaccount
 
 
-# Welcome to Revel
-
-## Getting Started
-
-A high-productivity web framework for the [Go language](http://www.golang.org/).
-
-### Start the web server:
-
-    revel run myapp
-
-   Run with <tt>--help</tt> for options.
-
-### Go to http://localhost:9000/ and you'll see:
-
-"It works"
-
-### Description of Contents
-
-The default directory structure of a generated Revel application:
-
-    myapp               App root
-      app               App sources
-        controllers     App controllers
-          init.go       Interceptor registration
-        models          App domain models
-        routes          Reverse routes (generated code)
-        views           Templates
-      tests             Test suites
-      conf              Configuration files
-        app.conf        Main configuration file
-        routes          Routes definition
-      messages          Message files
-      public            Public assets
-        css             CSS files
-        js              Javascript files
-        images          Image files
-
-app
-
-    The app directory contains the source code and templates for your application.
-
-conf
-
-    The conf directory contains the application’s configuration files. There are two main configuration files:
-
-    * app.conf, the main configuration file for the application, which contains standard configuration parameters
-    * routes, the routes definition file.
+6. Other Concepts
 
 
-messages
+        A. Using i18n
 
-    The messages directory contains all localized message files.
+Message File Organization
 
-public
+app/
+    messages/
+             labels.en
+             warnings.en
+             labels.fr
+             warnings.fr
 
-    Resources stored in the public directory are static assets that are served directly by the Web server. Typically it is split into three standard sub-directories for images, CSS stylesheets and JavaScript files.
 
-    The names of these directories may be anything; the developer need only update the routes.
+Message Files Format
 
-test
+key = value
 
-    Tests are kept in the tests directory. Revel provides a testing framework that makes it easy to write and run functional tests against your application.
+greeting=Hello
 
-### Follow the guidelines to start developing your application:
+greeting.name_arg=Hello %s!
 
-* The README file created within your application.
-* The [Getting Started with Revel](http://revel.github.io/tutorial/index.html).
-* The [Revel guides](http://revel.github.io/manual/index.html).
-* The [Revel sample apps](http://revel.github.io/samples/index.html).
-* The [API documentation](https://godoc.org/github.com/revel/revel).
+greeting.name=Rob
 
-## Contributing
-We encourage you to contribute to Revel! Please check out the [Contributing to Revel
-guide](https://github.com/revel/revel/blob/master/CONTRIBUTING.md) for guidelines about how
-to proceed. [Join us](https://groups.google.com/forum/#!forum/revel-framework)!
+greeting.suffix=, welcome to Revel!
+
+greeting.fule=%(greeting)s %(greeting.name)s%(greeting.suffix)
+
+
+Implementation through code:
+
+  c.Message("key", ...arguments)
+
+Implementation through template:
+
+{{msg . "key" ...arguments}}
+
+
+
+
+        B. Testing Structure
+
+myapp/
+      app/
+      conf/
+      public/
+      tests/
+
+
+type MyAppTest struct {
+  revel.TestSuite
+}
+
+func (t *MyAppTest) Before() {} // run before each test
+
+func (t *MyAppTest) After() {} // run after each test
+
+func (t *MyAppTest) Test...() {} // tests start with "Test"
+
+           Test API
+
+1. HTTP Requests
+    MakeRequest
+    MakeRequestSession
+    Post
+    PostForm
+    Get
+    Delete
+    WebSocket
+
+2. Request Inspection
+    BaseUrl
+    Host
+    WebSocketUrl
+
+
+
+
+
+          C. Assertion API
+
+Assert
+
+AssertContains
+
+AssertContainsRegex
+
+AssertEqual
+
+AssertContentType
+
+AssertHeader
+
+AssertOk - Ok status
+
+AssertStatus
+
+
+          D. Running Tests
+
+1. Interactive - fire up a web browser
+
+    http://pathtoapp/@tests
+
+
+    2-step process to register test runner
+
+    // app.conf
+
+    module.testrunner = github.com/revel/modules/testrunner
+
+
+    // routes
+
+    module:testrunner
+
+
+2. Non-interactive (for continuous integration)
+
+    // on the command line
+
+    revel test path/to/app dev      //test the entire application
+
+    revel test path/to/app dev SuiteTest  //run the single test file
+
+    revel test path/to/app dev SuiteTest.TestFoo  //single method test
+
+
+          E. Caching
+
+Using memcache
+
+Using redis
+
+Using in-memory
+
+
+import "github.com/revel/revel/cache"
+
+//retrieve a value
+
+var product Product
+
+err := cache.Get("key", &product)
+
+
+//store a value
+
+cache.Set("key", product, 30 * time.Minute)
+
+
+
+
+          F. Cron Jobs
+
+Use in heartbeat, cleaning or moving logs, etc
+
+Startup Jobs
+
+Recurring Jobs
+
+Named Schedules - run specific action
+
+One-off Jobs - recognize certain action and spawns a cron job
+
+
+1. Registering a Job - AppStart
+
+func init() {
+
+  revel.OnAppStart(func() {
+    /*do stuff at startup
+  })
+
+}
+
+type Job interface {
+  Run()
+}
+
+
+2. Registering a Job - Recurring Jobs
+
+import "github.com/revel/modules/jobs/app/jobs"
+
+func init() {
+  revel.OnAppStart( func() {
+
+    jobs.Schedule("@midnight", MyJob{})  //call a job by specific time
+
+    jobs.Every(24 * time.Hour, MyJob{})  //call a job by time interval
+
+  })
+}
+
+3. Registering a Job - Named Schedule
+
+Useful when you need same schedule that need to apply to multiple jobs.
+
+//app.configuration
+
+cron.custom_schedule = 0 */15 9-17 ? * MON*FRI
+
+func init() {
+
+  revel.OnAppStart(func(){
+
+    jobs.Schedule("cron.customer_schedule", MyJob{})
+
+  })
+}
+
+4. Registering a Job - One-off Jobs
+
+// schedule now, but run asynchronously
+
+jobs.Now(MyJob{})
+
+- another way
+
+// run async in the future
+
+jobs.In(5 * time.Minute, MyJob{})
+
+
+Monitoring Jobs
+
+http://pathtoapp/@jobs
+
+//app.conf
+
+module.jobs = github.com/revel/modules/jobs
+
+//routes
+module:jobs
